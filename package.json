@@ -1,7 +1,7 @@
 {
-  "name": "mlm-backend",
+  "name": "wealthslink-backend",
   "version": "1.0.0",
-  "description": "MLM Application Backend",
+  "description": "WealthsLink Backend API",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
