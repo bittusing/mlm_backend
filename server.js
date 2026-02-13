@@ -12,36 +12,28 @@ const app = express();
 // Trust proxy for Vercel
 app.set('trust proxy', 1);
 
-// CORS Configuration - MUST BE BEFORE OTHER MIDDLEWARE
-const corsOptions = {
-  origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
-    
-    const allowedOrigins = [
-      'http://localhost:3000',
-      'https://wealthslink.vercel.app',
-      'https://mlm-backend-git-main-abhilekh-singhs-projects.vercel.app'
-    ];
-    
-    // Check if origin is allowed or if it's a Vercel preview deployment
-    if (allowedOrigins.indexOf(origin) !== -1 || origin.includes('.vercel.app')) {
-      callback(null, true);
-    } else {
-      callback(null, true); // Allow all for now
-    }
-  },
+// SUPER SIMPLE CORS - Allow Everything
+app.use(cors({
+  origin: '*',
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
-  exposedHeaders: ['Content-Range', 'X-Content-Range'],
-  maxAge: 86400 // 24 hours
-};
+  exposedHeaders: ['Content-Range', 'X-Content-Range']
+}));
 
-app.use(cors(corsOptions));
-
-// Handle preflight requests
-app.options('*', cors(corsOptions));
+// Additional CORS headers as backup
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  
+  // Handle preflight
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(200);
+  }
+  next();
+});
 
 // Middleware
 app.use(express.json());
