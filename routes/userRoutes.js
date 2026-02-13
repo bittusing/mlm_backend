@@ -10,7 +10,7 @@ const { withdrawalLimiter, apiLimiter } = require('../middleware/rateLimiter');
 router.use(protect);
 
 // Apply general API rate limiter to all user routes
-router.use(apiLimiter);
+// router.use(apiLimiter);
 
 router.get('/dashboard', userController.getDashboard);
 router.get('/profile', userController.getProfile);
@@ -20,7 +20,9 @@ router.get('/transactions', transactionController.getMyTransactions);
 router.get('/income', transactionController.getIncomeBreakdown);
 
 // Apply specific withdrawal rate limiter
-router.post('/withdrawals', withdrawalLimiter, withdrawalController.createWithdrawal);
+router.post('/withdrawals',
+    //  withdrawalLimiter, 
+     withdrawalController.createWithdrawal);
 router.get('/withdrawals', withdrawalController.getMyWithdrawals);
 
 router.get('/team/direct', teamController.getDirectReferrals);

@@ -9,23 +9,23 @@ dotenv.config();
 
 const app = express();
 
-// Trust proxy - Important for getting real IP addresses behind proxies (Heroku, Netlify, etc.)
+// Trust proxy
 app.set('trust proxy', 1);
 
-// CORS Configuration - Simple and permissive for Vercel
-app.use(cors({
-  origin: '*', // Allow all origins temporarily to test
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
-  exposedHeaders: ['Content-Length', 'X-JSON'],
-  maxAge: 86400, // 24 hours
-  preflightContinue: false,
-  optionsSuccessStatus: 204
-}));
+// CORS - Allow everything
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(200);
+  }
+  next();
+});
 
-// Handle preflight requests
-app.options('*', cors());
+app.use(cors());
 
 // Middleware
 app.use(express.json());

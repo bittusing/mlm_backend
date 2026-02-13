@@ -5,7 +5,11 @@ const { protect } = require('../middleware/auth');
 const { planPurchaseLimiter, apiLimiter } = require('../middleware/rateLimiter');
 
 router.get('/', planController.getAllPlans);
-router.post('/purchase', protect, planPurchaseLimiter, planController.purchasePlan);
-router.get('/my-plans', protect, apiLimiter, planController.getMyPlans);
+router.post('/purchase', protect, 
+    // planPurchaseLimiter, 
+    planController.purchasePlan);
+router.get('/my-plans', protect,
+    //  apiLimiter, 
+     planController.getMyPlans);
 
 module.exports = router;
