@@ -13,7 +13,8 @@ const app = express();
 const corsOptions = {
   origin: [
     'http://localhost:3000',
-    'https://wealthslink.netlify.app'
+    'https://wealthslink.netlify.app',
+    'https://mlm-backend-git-main-abhilekh-singhs-projects.vercel.app'
   ],
   credentials: true,
   optionsSuccessStatus: 200
