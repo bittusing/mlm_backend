@@ -16,8 +16,8 @@ const corsOptions = {
     'https://wealthslink.netlify.app',
     'https://mlm-backend-git-main-abhilekh-singhs-projects.vercel.app'
   ],
-  credentials: true,
-  optionsSuccessStatus: 200
+//   credentials: true,
+//   optionsSuccessStatus: 200
 };
 
 // Middleware
