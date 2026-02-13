@@ -78,40 +78,52 @@ exports.register = async (req, res) => {
 
 exports.login = async (req, res) => {
   try {
+    console.log('Login attempt:', { email: req.body.email });
+    
     const { email, password } = req.body;
 
     if (!email || !password) {
+      console.log('Missing credentials');
       return res.status(400).json({
         success: false,
         message: 'Please provide email and password'
       });
     }
 
+    console.log('Finding user...');
     const user = await User.findOne({ email });
     if (!user) {
+      console.log('User not found:', email);
       return res.status(401).json({
         success: false,
         message: 'Invalid credentials'
       });
     }
 
+    console.log('User found:', user.email);
+
     if (user.isBlocked) {
+      console.log('User is blocked:', email);
       return res.status(403).json({
         success: false,
         message: 'Your account has been blocked'
       });
     }
 
+    console.log('Comparing password...');
     const isPasswordMatch = await user.comparePassword(password);
     if (!isPasswordMatch) {
+      console.log('Password mismatch for:', email);
       return res.status(401).json({
         success: false,
         message: 'Invalid credentials'
       });
     }
 
+    console.log('Generating token...');
     const token = generateToken(user._id, user.role);
 
+    console.log('Login successful for:', email);
     res.json({
       success: true,
       message: 'Login successful',
@@ -125,10 +137,12 @@ exports.login = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Login error:', error);
+    console.error('Login error details:', error);
+    console.error('Error stack:', error.stack);
     res.status(500).json({
       success: false,
-      message: 'Server error during login'
+      message: 'Server error during login',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
     });
   }
 };
