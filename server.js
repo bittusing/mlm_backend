@@ -9,6 +9,9 @@ dotenv.config();
 
 const app = express();
 
+// Trust proxy - Important for getting real IP addresses behind proxies (Heroku, Netlify, etc.)
+app.set('trust proxy', 1);
+
 // CORS Configuration
 const corsOptions = {
   origin: [
@@ -16,8 +19,8 @@ const corsOptions = {
     'https://wealthslink.netlify.app',
     'https://mlm-backend-git-main-abhilekh-singhs-projects.vercel.app'
   ],
-//   credentials: true,
-//   optionsSuccessStatus: 200
+  credentials: true,
+  optionsSuccessStatus: 200
 };
 
 // Middleware
@@ -56,3 +59,4 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
