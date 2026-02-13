@@ -13,18 +13,25 @@ const app = express();
 app.set('trust proxy', 1);
 
 // CORS Configuration
-const corsOptions = {
-  origin: [
-    'http://localhost:3000',
-    'https://wealthslink.netlify.app',
-    'https://mlm-backend-git-main-abhilekh-singhs-projects.vercel.app'
-  ],
-  credentials: true,
-  optionsSuccessStatus: 200
-};
+// const corsOptions = {
+//   origin: [
+//     'http://localhost:3000',
+//     'https://wealthslink.netlify.app',
+//     'https://mlm-backend-git-main-abhilekh-singhs-projects.vercel.app'
+//   ],
+//   credentials: true,
+//   optionsSuccessStatus: 200
+// };
 
+app.use(cors({
+    origin: [
+      'http://localhost:3000',
+      'https://wealthslink.netlify.app',
+      'https://mlm-backend-git-main-abhilekh-singhs-projects.vercel.app'
+    ]
+  }))
 // Middleware
-app.use(cors(corsOptions));
+// app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
