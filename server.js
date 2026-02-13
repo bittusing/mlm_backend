@@ -10,22 +10,28 @@ dotenv.config();
 const app = express();
 
 // Trust proxy
-app.set('trust proxy', 1);
+// app.set('trust proxy', 1);
 
-// CORS - Allow everything
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-  res.header('Access-Control-Allow-Credentials', 'true');
+// // CORS - Allow everything
+// app.use((req, res, next) => {
+//   res.header('Access-Control-Allow-Origin', '*');
+//   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
+//   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+//   res.header('Access-Control-Allow-Credentials', 'true');
   
-  if (req.method === 'OPTIONS') {
-    return res.sendStatus(200);
-  }
-  next();
-});
+//   if (req.method === 'OPTIONS') {
+//     return res.sendStatus(200);
+//   }
+//   next();
+// });
 
-app.use(cors());
+app.use(cors({
+    origin: [
+      'http://localhost:3000',
+       'https://wealthslink.vercel.app/',
+        'https://wealthslink.vercel.app'
+    ]
+  }))
 
 // Middleware
 app.use(express.json());

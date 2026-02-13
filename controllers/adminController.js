@@ -21,6 +21,60 @@ exports.getDashboard = async (req, res) => {
 
     const pendingWithdrawals = await Withdrawal.countDocuments({ status: 'PENDING' });
 
+    // Recent users (last 10 joined)
+    const recentUsers = await User.find({ role: 'USER' })
+      .select('name email createdAt referralCode')
+      .sort({ createdAt: -1 })
+      .limit(10);
+
+    // Recent investments (last 10 plan purchases)
+    const recentInvestments = await UserPlan.find()
+      .populate('userId', 'name email')
+      .populate('planId', 'name')
+      .select('userId planId amount createdAt')
+      .sort({ createdAt: -1 })
+      .limit(10);
+
+    // User growth chart data (last 6 months)
+    const sixMonthsAgo = new Date();
+    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+    
+    const userGrowth = await User.aggregate([
+      { $match: { role: 'USER', createdAt: { $gte: sixMonthsAgo } } },
+      {
+        $group: {
+          _id: { $dateToString: { format: '%Y-%m', date: '$createdAt' } },
+          count: { $sum: 1 }
+        }
+      },
+      { $sort: { _id: 1 } }
+    ]);
+
+    // Investment trend chart data (last 6 months)
+    const investmentTrend = await UserPlan.aggregate([
+      { $match: { createdAt: { $gte: sixMonthsAgo } } },
+      {
+        $group: {
+          _id: { $dateToString: { format: '%Y-%m', date: '$createdAt' } },
+          totalAmount: { $sum: '$amount' },
+          count: { $sum: 1 }
+        }
+      },
+      { $sort: { _id: 1 } }
+    ]);
+
+    // Commission breakdown by category
+    const commissionBreakdown = await Transaction.aggregate([
+      { $match: { type: 'CREDIT', category: { $ne: 'ROI' } } },
+      {
+        $group: {
+          _id: '$category',
+          total: { $sum: '$amount' },
+          count: { $sum: 1 }
+        }
+      }
+    ]);
+
     res.json({
       success: true,
       data: {
@@ -28,10 +82,16 @@ exports.getDashboard = async (req, res) => {
         totalActivePlans,
         totalBusinessVolume: businessVolume[0]?.total || 0,
         totalPayout: totalPayout[0]?.total || 0,
-        pendingWithdrawals
+        pendingWithdrawals,
+        recentUsers,
+        recentInvestments,
+        userGrowth,
+        investmentTrend,
+        commissionBreakdown
       }
     });
   } catch (error) {
+    console.error('Dashboard error:', error);
     res.status(500).json({ success: false, message: 'Server error' });
   }
 };
