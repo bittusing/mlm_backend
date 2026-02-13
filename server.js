@@ -1,6 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const cors = require('cors');
+// const cors = require('cors');
 const dotenv = require('dotenv');
 const cron = require('node-cron');
 const roiService = require('./services/roiService');
@@ -25,13 +25,13 @@ const app = express();
 //   next();
 // });
 
-app.use(cors({
-    origin: [
-      'http://localhost:3000',
-       'https://wealthslink.vercel.app/',
-        'https://wealthslink.vercel.app'
-    ]
-  }))
+// app.use(cors({
+//     origin: [
+//       'http://localhost:3000',
+//        'https://wealthslink.vercel.app/',
+//         'https://wealthslink.vercel.app'
+//     ]
+//   }))
 
 // Middleware
 app.use(express.json());
