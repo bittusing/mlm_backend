@@ -14,12 +14,13 @@ const app = express();
 
 // SUPER SIMPLE CORS - Allow Everything
 app.use(cors({
-  origin: '*',
-//   credentials: true,
-//   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-//   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
-//   exposedHeaders: ['Content-Range', 'X-Content-Range']
-}));
+  origin: [
+    'https://wealthslink.vercel.app',
+    'http://localhost:3000'
+  ],
+  credentials: true
+}));  
+
 
 // Additional CORS headers as backup
 // app.use((req, res, next) => {
