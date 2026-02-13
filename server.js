@@ -1,6 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
-// const cors = require('cors');
+const cors = require('cors');
 const dotenv = require('dotenv');
 const cron = require('node-cron');
 const roiService = require('./services/roiService');
@@ -9,29 +9,39 @@ dotenv.config();
 
 const app = express();
 
-// Trust proxy
-// app.set('trust proxy', 1);
+// Trust proxy for Vercel
+app.set('trust proxy', 1);
 
-// // CORS - Allow everything
-// app.use((req, res, next) => {
-//   res.header('Access-Control-Allow-Origin', '*');
-//   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
-//   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-//   res.header('Access-Control-Allow-Credentials', 'true');
-  
-//   if (req.method === 'OPTIONS') {
-//     return res.sendStatus(200);
-//   }
-//   next();
-// });
+// CORS Configuration - MUST BE BEFORE OTHER MIDDLEWARE
+const corsOptions = {
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    const allowedOrigins = [
+      'http://localhost:3000',
+      'https://wealthslink.vercel.app',
+      'https://mlm-backend-git-main-abhilekh-singhs-projects.vercel.app'
+    ];
+    
+    // Check if origin is allowed or if it's a Vercel preview deployment
+    if (allowedOrigins.indexOf(origin) !== -1 || origin.includes('.vercel.app')) {
+      callback(null, true);
+    } else {
+      callback(null, true); // Allow all for now
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
+  exposedHeaders: ['Content-Range', 'X-Content-Range'],
+  maxAge: 86400 // 24 hours
+};
 
-// app.use(cors({
-//     origin: [
-//       'http://localhost:3000',
-//        'https://wealthslink.vercel.app/',
-//         'https://wealthslink.vercel.app'
-//     ]
-//   }))
+app.use(cors(corsOptions));
+
+// Handle preflight requests
+app.options('*', cors(corsOptions));
 
 // Middleware
 app.use(express.json());
