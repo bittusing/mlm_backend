@@ -15,6 +15,7 @@ router.use(protect);
 router.get('/dashboard', userController.getDashboard);
 router.get('/profile', userController.getProfile);
 router.put('/profile', userController.updateProfile);
+router.put('/change-password', userController.changePassword);
 
 router.get('/transactions', transactionController.getMyTransactions);
 router.get('/income', transactionController.getIncomeBreakdown);

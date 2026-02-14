@@ -108,8 +108,47 @@ exports.updateProfile = async (req, res) => {
       { new: true, runValidators: true }
     ).select('-password');
 
-    res.json({ success: true, message: 'Profile updated', user });
+    res.json({ success: true, message: 'Profile updated successfully', user });
   } catch (error) {
+    console.error('Profile update error:', error);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+};
+
+exports.changePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide current and new password'
+      });
+    }
+
+    if (newPassword.length < 6) {
+      return res.status(400).json({
+        success: false,
+        message: 'New password must be at least 6 characters long'
+      });
+    }
+
+    const user = await User.findById(req.user.id);
+    
+    const isPasswordMatch = await user.comparePassword(currentPassword);
+    if (!isPasswordMatch) {
+      return res.status(401).json({
+        success: false,
+        message: 'Current password is incorrect'
+      });
+    }
+
+    user.password = newPassword;
+    await user.save();
+
+    res.json({ success: true, message: 'Password changed successfully' });
+  } catch (error) {
+    console.error('Password change error:', error);
     res.status(500).json({ success: false, message: 'Server error' });
   }
 };
